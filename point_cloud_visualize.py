@@ -7,81 +7,84 @@ import argparse
 
 from matplotlib import pyplot as plt
 
-LABEL_KEYS = np.load("label_vals.npy")
-
-LABEL_COLORS = {
-  0 : [0, 0, 0],
-  1 : [0, 0, 255],
-  10: [245, 150, 100],
-  11: [245, 230, 100],
-  13: [250, 80, 100],
-  15: [150, 60, 30],
-  16: [255, 0, 0],
-  18: [180, 30, 80],
-  20: [255, 0, 0],
-  30: [30, 30, 255],
-  31: [200, 40, 255],
-  32: [90, 30, 150],
-  40: [255, 0, 255],
-  44: [255, 150, 255],
-  48: [75, 0, 75],
-  49: [75, 0, 175],
-  50: [0, 200, 255],
-  51: [50, 120, 255],
-  52: [0, 150, 255],
-  60: [170, 255, 150],
-  70: [0, 175, 0],
-  71: [0, 60, 135],
-  72: [80, 240, 150],
-  80: [150, 240, 255],
-  81: [0, 0, 255],
-  99: [255, 255, 50],
-  252: [245, 150, 100],
-  256: [255, 0, 0],
-  253: [200, 40, 255],
-  254: [30, 30, 255],
-  255: [90, 30, 150],
-  257: [250, 80, 100],
-  258: [180, 30, 80],
-  259: [255, 0, 0],
-}
-
-LEARNING_MAP = {
-  0: 0,      # "unlabeled", and others ignored
-  1: 10,     # "car"
-  2: 11,     # "bicycle"
-  3: 15,     # "motorcycle"
-  4: 18,     # "truck"
-  5: 20,     # "other-vehicle"
-  6: 30,     # "person"
-  7: 31,     # "bicyclist"
-  8: 32,     # "motorcyclist"
-  9: 40,     # "road"
-  10: 44,    # "parking"
-  11: 48,    # "sidewalk"
-  12: 49,    # "other-ground"
-  13: 50,    # "building"
-  14: 51,    # "fence"
-  15: 70,    # "vegetation"
-  16: 71,    # "trunk"
-  17: 72,    # "terrain"
-  18: 80,    # "pole"
-  19: 81,    # "traffic-sign"
-}
-
-color_per_label = {}
-
-for i in range(len(LABEL_KEYS) + 1):
-    color_per_label[i] = LABEL_COLORS[LEARNING_MAP[i]]
-    color_per_label[i].reverse()
 
 def main(args):
-
+    label_path = args.label_path
     input_path = args.input_path
     hide_window = args.hide_window == None
     video_output_path = args.video_output_path
 
-    print("Video", video_output_path)
+    LABEL_KEYS = np.load(label_path)
+
+    LABEL_COLORS = {
+      0 : [0, 0, 0],
+      1 : [0, 0, 255],
+      10: [245, 150, 100],
+      11: [245, 230, 100],
+      13: [250, 80, 100],
+      15: [150, 60, 30],
+      16: [255, 0, 0],
+      18: [180, 30, 80],
+      20: [255, 0, 0],
+      30: [30, 30, 255],
+      31: [200, 40, 255],
+      32: [90, 30, 150],
+      40: [255, 0, 255],
+      44: [255, 150, 255],
+      48: [75, 0, 75],
+      49: [75, 0, 175],
+      50: [0, 200, 255],
+      51: [50, 120, 255],
+      52: [0, 150, 255],
+      60: [170, 255, 150],
+      70: [0, 175, 0],
+      71: [0, 60, 135],
+      72: [80, 240, 150],
+      80: [150, 240, 255],
+      81: [0, 0, 255],
+      99: [255, 255, 50],
+      252: [245, 150, 100],
+      256: [255, 0, 0],
+      253: [200, 40, 255],
+      254: [30, 30, 255],
+      255: [90, 30, 150],
+      257: [250, 80, 100],
+      258: [180, 30, 80],
+      259: [255, 0, 0],
+    }
+
+    LEARNING_MAP = {
+      0: 0,      # "unlabeled", and others ignored
+      1: 10,     # "car"
+      2: 11,     # "bicycle"
+      3: 15,     # "motorcycle"
+      4: 18,     # "truck"
+      5: 20,     # "other-vehicle"
+      6: 30,     # "person"
+      7: 31,     # "bicyclist"
+      8: 32,     # "motorcyclist"
+      9: 40,     # "road"
+      10: 44,    # "parking"
+      11: 48,    # "sidewalk"
+      12: 49,    # "other-ground"
+      13: 50,    # "building"
+      14: 51,    # "fence"
+      15: 70,    # "vegetation"
+      16: 71,    # "trunk"
+      17: 72,    # "terrain"
+      18: 80,    # "pole"
+      19: 81,    # "traffic-sign"
+    }
+
+    color_per_label = {}
+
+    for i in range(len(LABEL_KEYS) + 1):
+        color_per_label[i] = LABEL_COLORS[LEARNING_MAP[i]]
+        color_per_label[i].reverse()
+
+
+
+
 
     def find_colors(labels):
         result = np.zeros((len(labels), 3))
@@ -158,7 +161,6 @@ def main(args):
 
             update_point_cloud("%s/vals_%d" % (input_path, current), pcd)
             vis.update_geometry(pcd)
-            # add_point_cloud_to_scene(vis, pcd_new)
 
             previous_time_clock = time.time_ns()
 
@@ -193,6 +195,7 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--video_output_path', default='')
     parser.add_argument('-w', '--hide_window', action=argparse.BooleanOptionalAction)
     parser.add_argument('-i', '--input_path', default='demo_results/')
+    parser.add_argument('-l', '--label_path', default='demo_results/label_vals.npy')
     args = parser.parse_args()
 
     main(args)
